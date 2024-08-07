@@ -15,8 +15,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-
-
 /**
  * @author Sugandha Aggarwal
  * @created 2024-08-07
@@ -68,7 +66,7 @@ public class EndpointsController {
                                         .body(apiPayload)
                                         .post(endpoint2);
         
-        System.out.println("response received from endpoint2..."+response1.asString());
+        System.out.println("response received from endpoint2..."+response2.asString());
     	System.out.println("comparing responses...");
 
         // Compare the responses
