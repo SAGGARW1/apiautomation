@@ -26,13 +26,20 @@ public class EndpointsController {
 	
 	@GetMapping("/hello")
 	public String hello() {
-		return "Hello there";
+		return "Service is UP!";
 	}
 
     @PostMapping("/compare")
     public String compareEndpoints(
     	@RequestHeader String userid,
         @RequestBody Map<String, Object> request) {
+    	if (userid.isBlank() || userid.isEmpty()) {
+            return "user-id header is missing";
+        }
+
+        if (request == null || !request.containsKey("endpoint1") || !request.containsKey("endpoint2")  ) {
+            return "Invalid request payload";
+        }
     
     	String endpoint1 = "";
     	String endpoint2 = "";
@@ -41,7 +48,11 @@ public class EndpointsController {
     	if(request!=null) {
     		endpoint1 = (String) request.get("endpoint1");
     		endpoint2 = (String) request.get("endpoint2");
+    		
     		apiPayload = (Map<String, Object>) request.get("apiPayload");
+    		if (endpoint1.isBlank() || endpoint2.isBlank() || apiPayload.isEmpty()) {
+                return "Make sure the endpoints/ apipayload is not null or empty";
+            }
     		
         	System.out.println("request read..");
 
@@ -74,7 +85,7 @@ public class EndpointsController {
         System.out.println("processing complete");
 
         if("".equals(response)) {
-        	response = "Both APIs gave same response!";
+        	response = "No mismatches, both APIs gave same response!";
         }
         return response;
     }
@@ -108,11 +119,16 @@ public class EndpointsController {
             JsonNode value1 = field1.getValue();
             JsonNode value2 = field2.getValue();
 
-            if (!value1.equals(value2)) {
-                result.append("Difference in field '").append(key).append("':\n");
-                result.append("  Endpoint 1: ").append(value1).append("\n");
-                result.append("  Endpoint 2: ").append(value2).append("\n");
-            }
+           
+            if (field1 == null || field2 == null || !value1.equals(value2)) {
+                result.append("Difference in field '").append(key != null ? key : "<unknown>").append("':\n");
+                if (value1 != null) {
+                    result.append("  Endpoint 1: ").append(value1).append("\n");
+                }
+                if (value2 != null) {
+                    result.append("  Endpoint 2: ").append(value2).append("\n");
+                }
+            } 
         }
     }
 }
